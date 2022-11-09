@@ -114,17 +114,19 @@ const reusableGaleryTitle = function(rover, launchDate, landingDate, mostRecentP
  * @param {*} earthDate 
  * @returns 
  */
-const reusablePhotoTile = function(imageSource, cameraName, earthDate) {
+const reusablePhotoTile = function(imageSource, cameraName, earthDate, roverStatus) {
     this._imageSource = imageSource;
     this._cameraName = cameraName;
     this._earthDate = earthDate;
-    return (_imageSource, _cameraName, _earthDate) => {
+    this._roverStatus = roverStatus;
+    return (_imageSource, _cameraName, _earthDate, _roverStatus) => {
         return `
         <div class="tile">
         <a href="${this._imageSource}" target="_blank">
         <img class="tile-image" src="${this._imageSource}" height=300px width=300px>
         <div class="tile-info">Cam: ${this._cameraName}<br>
-        Taken: ${this._earthDate}</div>
+        Taken: ${this._earthDate}<br>
+        Status: ${this._roverStatus}</div>
         </img>
         </a>
 
@@ -172,9 +174,8 @@ const RoverTiles = (stateJson) => {
         }
     }
     if (Object.keys(rover.images).length > 0) {
-        // debugger;
         let images = rover.images.response.photos;
-        let html_tiles = images.map(image => reusablePhotoTile(image.img_src, image.camera.full_name, image.earthDate)());
+        let html_tiles = images.map(image => reusablePhotoTile(image.img_src, image.camera.full_name, image.earthDate, image.rover.status)());
         return html_tiles.reduce( (previous, current) => current+= previous );
     } else {
         return "";
